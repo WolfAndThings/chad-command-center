@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chad Freedman -- LinkedIn Command Center</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    :root {
+      --bg: #0a0a0f;
+      --bg-card: #12121a;
+      --bg-card-hover: #181824;
+      --bg-accent: #1a1a2e;
+      --border: #1e1e30;
+      --border-glow: #2a2a4a;
+      --text: #e8e8f0;
+      --text-muted: #7a7a9a;
+      --text-dim: #4a4a6a;
+      --accent: #6366f1;
+      --accent-glow: #818cf8;
+      --green: #22c55e;
+      --green-dim: #16a34a;
+      --yellow: #eab308;
+      --orange: #f97316;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --cyan: #06b6d4;
+      --purple: #a855f7;
+      --pink: #ec4899;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border-glow); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 10, 15, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0;
+    }
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 800;
+      color: white;
+    }
+    .logo-text {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .logo-text span { color: var(--text-muted); font-weight: 400; }
+
+    .nav { display: flex; gap: 4px; }
+    .nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .nav a:hover { color: var(--text); background: var(--bg-accent); }
+    .nav a.active { color: var(--accent-glow); background: rgba(99, 102, 241, 0.1); }
+
+    .hero {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 60px 32px 40px;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(99, 102, 241, 0.08), transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-glow);
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .hero-badge .pulse {
+      width: 8px; height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+      50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+    }
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .hero h1 .gradient {
+      background: linear-gradient(135deg, var(--accent-glow), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      font-size: 18px;
+      color: var(--text-muted);
+      max-width: 600px;
+      line-height: 1.7;
+    }
+
+    .stat-bar {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 32px 48px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .stat-card:hover {
+      border-color: var(--border-glow);
+      transform: translateY(-2px);
+    }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-value.green { color: var(--green); }
+    .stat-value.blue { color: var(--blue); }
+    .stat-value.purple { color: var(--purple); }
+    .stat-value.orange { color: var(--orange); }
+    .stat-value.cyan { color: var(--cyan); }
+    .stat-value.pink { color: var(--pink); }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-top: 4px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    .section {
+      margin-bottom: 64px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .section-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .section-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .section-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 20px;
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 4px;
+      border: 1px solid var(--border);
+      width: fit-content;
+    }
+    .tab {
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      background: none;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.3s;
+    }
+    .card:hover {
+      border-color: var(--border-glow);
+    }
+
+    .posts-grid {
+      display: grid;
+      gap: 16px;
+    }
+    .post-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.3s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .post-card:hover {
+      border-color: var(--accent);
+      background: var(--bg-card-hover);
+    }
+    .post-card.ramp {
+      border-left: 3px solid var(--cyan);
+    }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .post-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .post-tag {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 100px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .tag-story { background: rgba(59, 130, 246, 0.15); color: var(--blue); }
+    .tag-ramp { background: rgba(6, 182, 212, 0.15); color: var(--cyan); }
+    .tag-sales { background: rgba(168, 85, 247, 0.15); color: var(--purple); }
+    .tag-personal { background: rgba(249, 115, 22, 0.15); color: var(--orange); }
+    .tag-reflection { background: rgba(236, 72, 153, 0.15); color: var(--pink); }
+    .post-length {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .post-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+    .post-preview {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .post-cta {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--accent-glow);
+      font-weight: 600;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--bg-accent);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      opacity: 0;
+    }
+    .post-card:hover .copy-btn { opacity: 1; }
+    .copy-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+    .copy-btn.copied { background: var(--green); color: white; border-color: var(--green); }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glow);
+      border-radius: 20px;
+      max-width: 640px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 32px;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--bg-accent);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+    .modal-close:hover { background: var(--red); color: white; border-color: var(--red); }
+    .modal-content {
+      font-size: 15px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      color: var(--text);
+    }
+    .modal-copy-btn {
+      margin-top: 20px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+    }
+    .modal-copy-btn:hover { background: var(--accent-glow); }
+
+    .engagement-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    .person-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.2s;
+    }
+    .person-card:hover { border-color: var(--accent); background: var(--bg-card-hover); }
+    .person-card.active-week { border-color: var(--green); background: rgba(34, 197, 94, 0.05); }
+    .person-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: white;
+      flex-shrink: 0;
+    }
+    .person-info { flex: 1; }
+    .person-name { font-size: 14px; font-weight: 600; }
+    .person-week { font-size: 11px; color: var(--text-muted); }
+    .person-link {
+      color: var(--accent-glow);
+      text-decoration: none;
+      font-size: 18px;
+      transition: all 0.2s;
+    }
+    .person-link:hover { color: var(--cyan); transform: scale(1.1); }
+
+    .magnets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .magnet-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.3s;
+    }
+    .magnet-card:hover { border-color: var(--accent); }
+    .magnet-keyword {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--cyan);
+      background: rgba(6, 182, 212, 0.1);
+      padding: 4px 12px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    .magnet-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+    .magnet-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+    .magnet-details { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+    .magnet-status {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .status-ready { background: var(--green); }
+    .status-pending { background: var(--yellow); }
+
+    .routine-timeline { display: flex; flex-direction: column; gap: 2px; }
+    .routine-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .routine-item:first-child { border-radius: 14px 14px 0 0; }
+    .routine-item:last-child { border-radius: 0 0 14px 14px; }
+    .routine-item:hover { background: var(--bg-card-hover); }
+    .routine-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-glow);
+      min-width: 100px;
+    }
+    .routine-activity { font-size: 14px; font-weight: 500; }
+    .routine-duration {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--bg-accent);
+      padding: 2px 10px;
+      border-radius: 100px;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    .metric-card:hover { border-color: var(--border-glow); }
+    .metric-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+    .metric-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .metric-target { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+
+    .data-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .data-table th {
+      background: var(--bg-accent);
+      padding: 14px 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      text-align: left;
+    }
+    .data-table td {
+      padding: 14px 20px;
+      font-size: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .data-table tr:hover td { background: var(--bg-card-hover); }
+    .data-table .month-current { color: var(--accent-glow); font-weight: 700; }
+
+    .voice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .voice-do, .voice-dont { border-radius: 14px; padding: 24px; }
+    .voice-do { background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.15); }
+    .voice-dont { background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); }
+    .voice-heading {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .voice-list { list-style: none; font-size: 14px; line-height: 2; color: var(--text-muted); }
+
+    .revenue-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .revenue-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+    }
+    .revenue-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    .revenue-range { display: flex; align-items: baseline; justify-content: center; gap: 8px; }
+    .revenue-amount { font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 800; }
+    .revenue-separator { font-size: 14px; color: var(--text-dim); }
+
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 32px;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 32px; }
+      .stat-bar { grid-template-columns: repeat(3, 1fr); }
+      .voice-grid { grid-template-columns: 1fr; }
+      .revenue-grid { grid-template-columns: 1fr; }
+      .nav { display: none; }
+      .engagement-grid { grid-template-columns: 1fr; }
+    }
+
+    .week-content { display: none; }
+    .week-content.active { display: block; }
+    .post-week-section { display: none; }
+    .post-week-section.active { display: block; }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border-glow), transparent);
+      margin: 64px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">CF</div>
+        <div class="logo-text">Command Center <span>/ 90-Day Strategy</span></div>
+      </div>
+      <nav class="nav">
+        <a href="#dashboard" class="active">Dashboard</a>
+        <a href="#posts">Posts</a>
+        <a href="#engagement">Engagement</a>
+        <a href="#magnets">Lead Magnets</a>
+        <a href="#metrics">Metrics</a>
+        <a href="#voice">Voice</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-badge"><div class="pulse"></div> 90 Days -- Feb to April 2026</div>
+    <h1>Chad Freedman <br><span class="gradient">LinkedIn Command Center</span></h1>
+    <p class="hero-sub">Build authority as a sales practitioner. Document the RAMP journey. Attract enterprise buyers and aspiring AEs.</p>
+  </section>
+
+  <div class="stat-bar" id="dashboard">
+    <div class="stat-card">
+      <div class="stat-value green">179.8%</div>
+      <div class="stat-label">5-Year Avg Quota</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value blue">#1</div>
+      <div class="stat-label">AE out of 75 at Sage</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value purple">3X</div>
+      <div class="stat-label">Platinum Club</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value orange">9 Yrs</div>
+      <div class="stat-label">Quota Streak</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value cyan">3,899</div>
+      <div class="stat-label">Followers</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value pink">RAMP</div>
+      <div class="stat-label">Started Feb 17</div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <section class="section" id="routine">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(6, 182, 212, 0.1); color: var(--cyan);">&#9201;</div>
+        <div>
+          <div class="section-title">Daily Routine</div>
+          <div class="section-desc">45 minutes, 7:00 - 7:50 AM &middot; Mon - Fri</div>
+        </div>
+      </div>
+      <div class="routine-timeline">
+        <div class="routine-item">
+          <div class="routine-time">7:00 AM</div>
+          <div class="routine-activity">Engage on 5 posts from this week's list</div>
+          <div class="routine-duration">15 min</div>
+        </div>
+        <div class="routine-item">
+          <div class="routine-time">7:15 AM</div>
+          <div class="routine-activity">Review today's post -- read it out loud</div>
+          <div class="routine-duration">10 min</div>
+        </div>
+        <div class="routine-item">
+          <div class="routine-time">7:30 AM</div>
+          <div class="routine-activity" style="font-weight: 800; color: var(--green);">POST -- then stay online</div>
+          <div class="routine-duration">Go time</div>
+        </div>
+        <div class="routine-item">
+          <div class="routine-time">7:30 AM</div>
+          <div class="routine-activity">Respond to comments as they come in</div>
+          <div class="routine-duration">20 min</div>
+        </div>
+        <div class="routine-item">
+          <div class="routine-time">Lunch</div>
+          <div class="routine-activity">3-5 strategic comments on ICP posts</div>
+          <div class="routine-duration">10 min</div>
+        </div>
+        <div class="routine-item">
+          <div class="routine-time">Afternoon</div>
+          <div class="routine-activity">2-3 connection requests to target audience</div>
+          <div class="routine-duration">5 min</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ===== POSTS ===== -->
+    <section class="section" id="posts">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(99, 102, 241, 0.1); color: var(--accent-glow);">&#9998;</div>
+        <div>
+          <div class="section-title">February Posts</div>
+          <div class="section-desc">One Voice. One Track. All Chad. &middot; Click to expand, hover to copy</div>
+        </div>
+      </div>
+
+      <!-- WEEK TABS -->
+      <div class="tabs" id="post-tabs">
+        <button class="tab active" onclick="showWeek(2)">Week 2</button>
+        <button class="tab" onclick="showWeek(3)">Week 3</button>
+        <button class="tab" onclick="showWeek(4)">Week 4</button>
+      </div>
+
+      <!-- ====== WEEK 2: Feb 10-14 (5 posts) ====== -->
+      <div class="post-week-section active" id="week-2">
+        <div class="posts-grid">
+
+          <!-- Post 1: The controller who waited 3 years -->
+          <div class="post-card" onclick="openPost(this)">
+            <button class="copy-btn" onclick="event.stopPropagation(); copyPost(this)">Copy</button>
+            <div class="post-meta">
+              <span class="post-date">Mon Feb 10</span>
+              <span class="post-tag tag-story">Story</span>
+              <span class="post-length">Long</span>
+            </div>
+            <div class="post-title">The controller who waited 3 years</div>
+            <div class="post-preview">I keep thinking about this one moment from last quarter. I'm on a call with a controller at a manufacturing company outside Detroit. Midsize. Maybe 400 employees. She's been in the role 11 years.</div>
+            <div class="post-cta">Read Full Post &rarr;</div>
+            <div class="post-full" style="display:none">I keep thinking about this one moment from last quarter.
+
+I'm on a call with a controller at a manufacturing company outside Detroit. Midsize. Maybe 400 employees. She's been in the role 11 years.
+
+And she says something that stops me cold.
+
+"I've known we needed to change for three years. I just couldn't get anyone to care enough to do something about it."
+
+Three years.
+
+She knew. Her team knew. The data was obvious. But nobody above her felt the pain enough to move.
+
+And I realized sitting there that my job isn't to convince anyone of anything. My job is to find the people who already know and help them get the internal momentum they've been unable to build on their own.
+
+That's a completely different thing than selling.
+
+She signed 4 months later. $187K. Not because I convinced her. She was convinced before I ever showed up.
+
+I just gave her the language and the data to convince everyone else.
+
+I think about her a lot. I think about how many controllers and finance directors are sitting in that exact position right now. Knowing. Waiting. Frustrated.
+
+Three years is a long time to know something and not be able to do anything about it.</div>
+          </div>
+
+          <!-- Post 2: I got fired once -->
+          <div class="post-card" onclick="openPost(this)">
+            <button class="copy-btn" onclick="event.stopPropagation(); copyPost(this)">Copy</button>
+            <div class="post-meta">
+              <span class="post-date">Tue Feb 11</span>
+              <span class="post-tag tag-personal">Personal</span>
+              <span class="post-length">Long</span>
+            </div>
+            <div class="post-title">I got fired once</div>
+            <div class="post-preview">I got fired once. I was 26. I'd been at the company maybe a year. I was loud. I was confident. I thought showing up and being smart was the whole job.</div>
+            <div class="post-cta">Read Full Post &rarr;</div>
+            <div class="post-full" style="display:none">I got fired once.
+
+I was 26. I'd been at the company maybe a year. I was loud. I was confident. I thought showing up and being smart was the whole job.
+
+It wasn't.
+
+My manager pulled me into a room on a Tuesday afternoon. There were two HR people I'd never met. One of them had a folder. That's when I knew.
+
+I don't even remember the drive home. I remember sitting in my apartment staring at the wall thinking I had no idea what I was going to do. I had rent due in 9 days. I had $1,200 in my checking account.
+
+The thing about getting fired is that it strips away every story you've been telling yourself. Every "I'm talented enough to figure it out" and "I'm different from everyone else" and "the rules don't apply to me."
+
+They do apply to you. You're not different. Talent without discipline is just wasted potential with a good personality.
+
+It took me 3 months to find another job. During those 3 months I rebuilt everything from scratch. How I prepared for calls. How I managed my time. How I followed up. How I treated the boring parts of the job that I used to skip because I thought they were beneath me.
+
+Those 3 months built the foundation for everything that came after. The 179% average. The #1 ranking. The Platinum Club years. All of it started in that apartment staring at a wall wondering what went wrong.
+
+I don't tell this story to be inspirational. I tell it because I think there's someone reading this who's going through something similar right now. And I want them to know that the worst moment of my career was also the most important one.
+
+Not because everything happens for a reason. That's lazy thinking.
+
+Because getting knocked down forced me to build something I never would have built while I was coasting.</div>
+          </div>
+
+          <!-- Post 3: 22 minutes of silence -->
+          <div class="post-card" onclick="openPost(this)">
+            <button class="copy-btn" onclick="event.stopPropagation(); copyPost(this)">Copy</button>
+            <div class="post-meta">
+              <span class="post-date">Wed Feb 12</span>
+              <span class="post-tag tag-sales">Sales</span>
+              <span class="post-length">Medium</span>
+            </div>
+            <div class="post-title">22 minutes of silence</div>
+            <div class="post-preview">Something happened on a call yesterday that I want to talk about. I asked a buyer what happens if they don't do anything. If they just keep running things the way they're running them.</div>
+            <div class="post-cta">Read Full Post &rarr;</div>
+            <div class="post-full" style="display:none">Something happened on a call yesterday that I want to talk about.
+
+I asked a buyer what happens if they don't do anything. If they just keep running things the way they're running them.
+
+She went quiet. Like actually quiet. Not the polite "let me think about it" quiet. The kind of quiet where you can tell someone is seeing something they haven't let themselves see before.
+
+Then she said "honestly? I think I'd lose my best analyst. She's been telling me for 6 months that she can't keep doing this manually. And I keep telling her we're working on it."
+
+That's it. That's the whole post.
+
+Because that moment. That specific moment where a buyer connects their inaction to a real human consequence. That's where everything changes.
+
+I didn't say anything after she said that. I just let it sit. I let her sit with it.
+
+Fifteen seconds of silence. Maybe twenty. Felt like five minutes.
+
+Then she said "OK. What does the timeline look like to get this done before Q3?"
+
+I didn't close that deal. She closed it herself. I just created the space for her to see what she already knew.
+
+Sometimes the most important thing you can do on a call is absolutely nothing.</div>
+          </div>
+
+          <!-- Post 4: My dad's advice -->
+          <div class="post-card" onclick="openPost(this)">
+            <button class="copy-btn" onclick="event.stopPropagation(); copyPost(this)">Copy</button>
+            <div class="post-meta">
+              <span class="post-date">Thu Feb 13</span>
+              <span class="post-tag tag-personal">Personal</span>
+              <span class="post-length">Medium</span>
+            </div>
+            <div class="post-title">My dad's advice</div>
+            <div class="post-preview">I've been thinking about something my dad said to me when I was starting out. He's not in sales. Never has been. He's an engineer. Thinks in systems. Doesn't say much.</div>
+            <div class="post-cta">Read Full Post &rarr;</div>
+            <div class="post-full" style="display:none">I've been thinking about something my dad said to me when I was starting out.
+
+He's not in sales. Never has been. He's an engineer. Thinks in systems. Doesn't say much.
+
+But when I got my first sales job he told me "the people who are best at their jobs are the ones who do the parts nobody sees."
+
+I didn't understand it at the time. I thought sales was about the pitch. The demo. The close. The stuff people see.
+
+It's not.
+
+It's about the 5 minutes of research before a call that nobody will ever know about. It's about updating your CRM at 6pm on a Friday when nobody's watching. It's about sending a thoughtful follow-up that takes 20 minutes to write instead of a "just checking in" that takes 20 seconds.
+
+It's about the discipline to do the invisible work. Day after day. For years.
+
+My dad was right. He usually is. But I had to figure it out the hard way because I was 24 and thought I knew everything.
+
+239% quota doesn't happen in the meeting room. It happens at 6pm on a Friday when you're updating your notes from the last call because you know Future You will need them.
+
+Nobody claps for that. Nobody sees it. That's the point.</div>
+          </div>
+
+          <!-- Post 5: The deal I broke with one sentence -->
+          <div class="post-card" onclick="openPost(this)">
+            <button class="copy-btn" onclick="event.stopPropagation(); copyPost(this)">Copy</button>
+            <div class="post-meta">
+              <span class="post-date">Fri Feb 14</span>
+              <span class="post-tag tag-story">Story</span>
+              <span class="post-length">Long</span>
+            </div>
+            <div class="post-title">The deal I broke with one sentence</div>
+            <div class="post-preview">I want to talk about trust. Not the LinkedIn version where everyone posts "people buy from people they trust" and gets 400 likes and nothing changes. Real trust.</div>
+            <div class="post-cta">Read Full Post &rarr;</div>
+            <div class="post-full" style="display:none">I want to talk about trust. Not the LinkedIn version where everyone posts "people buy from people they trust" and gets 400 likes and nothing changes.
+
+Real trust. The kind that takes months to build and seconds to destroy.
+
+I had a deal in 2022. Mid-market SaaS company. The VP of Finance and I had been working together for about 6 weeks. Good relationship. Honest conversations. She told me things about her org that she probably shouldn't have. That's how much she trusted me.
+
+Then I screwed up.
+
+I was in a meeting with her boss, the CFO, and I casually mentioned something she'd told me in confidence. I wasn't trying to be political. I wasn't trying to go around her. I just wasn't thinking.
+
+She called me after the meeting. Her voice was flat. Not angry. Worse. Disappointed.
+
+"I told you that because I trusted you. Not so you could use it to look smart in front of my boss."
+
+The deal still closed. But our relationship never fully recovered. She was cordial. Professional. But the openness was gone. The real conversations stopped. I became just another vendor.
+
+I think about that phone call probably once a month. Not because I lost a relationship, although I did. But because it taught me that trust isn't a sales technique. It's a responsibility.
+
+When a buyer opens up to you, they're taking a risk. They're betting that you're not going to use their honesty against them. And the moment you prove them wrong, even accidentally, even with good intentions, it's over.
+
+I never made that mistake again.
+
+But I had to make it once to understand what trust actually costs when you break it.
+
+Happy Valentine's Day. Go protect someone's trust today instead of trying to earn more of it.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ====== WEEK 3: Feb 17-21 (5 posts) ====== -->
+      <div class="post-week-section" id="week-3">
+        <div class="posts-grid">
+
+          <!-- Post 6: First day at Ramp -->
+          <div class="post-card ramp" onclick="openPost(this)">
+            <button class="copy-btn" onclick="event.stopPropagation(); copyPost(this)">Copy</button>
+            <div class="post-meta">
+              <span class="post-date">Mon Feb 17</span>
+              <span class="post-tag tag-ramp">Ramp</span>
+              <span class="post-length">Medium</span>
+            </div>
+            <div class="post-title">First day at Ramp</div>
+            <div class="post-preview">First day at Ramp. I'm writing this on my phone during lunch because I want to capture what this actually feels like before I forget. Before the experience gets polished into something neat and tidy for the internet.</div>
+            <div class="post-cta">Read Full Post &rarr;</div>
+            <div class="post-full" style="display:none">First day at Ramp.
+
+I'm writing this on my phone during lunch because I want to capture what this actually feels like before I forget. Before the experience gets polished into something neat and tidy for the internet.
+
+It feels like being 22 again.
+
+I don't know anyone's name. I don't know how to work the coffee machine. I joined a Zoom meeting 3 minutes late because I couldn't find the link. Someone asked me a product question and I had to say "I genuinely don't know yet."
+
+That last part is the hardest for me. I've spent 9 years being the person with answers. Being the expert. The person other reps come to when they're stuck.
+
+Today I'm the one who's stuck.
+
+And I have to be OK with that. I have to sit in the discomfort of not knowing without trying to fast-forward through it.
+
+My instinct is to study everything tonight. Read every doc. Watch every training video. Show up tomorrow acting like I've been here for months.
+
+I'm not going to do that.
+
+I'm going to show up tomorrow and ask more dumb questions. Because the fastest way to learn isn't to pretend you already know. It's to be honest about what you don't.
+
+That's terrifying for someone who's built their identity around being good at this.
+
+But here we are.
+
+Day 1. Zero answers. All questions.
+
+More tomorrow.</div>
+          </div>
+
+          <!-- Post 7: Interested, not interesting -->
+          <div class="post-card" onclick="openPost(this)">
+            <button class="copy-btn" onclick="event.stopPropagation(); copyPost(this)">Copy</button>
+            <div class="post-meta">
+              <span class="post-date">Tue Feb 18</span>
+              <span class="post-tag tag-sales">Sales</span>
+              <span class="post-length">Medium</span>
+            </div>
+            <div class="post-title">Interested, not interesting</div>
+            <div class="post-preview">Had a conversation with a rep here yesterday that I can't stop thinking about. She's been at Ramp maybe 8 months. Crushing it. Top of the board.</div>
+            <div class="post-cta">Read Full Post &rarr;</div>
+            <div class="post-full" style="display:none">Had a conversation with a rep here yesterday that I can't stop thinking about.
+
+She's been at Ramp maybe 8 months. Crushing it. Top of the board.
+
+I asked her what she thinks makes the difference. Expecting her to say something about the product or the market or the leads.
+
+She said "I stopped trying to be interesting and started trying to be interested."
+
+And then she told me about a call she'd had that morning. CFO of a logistics company. Instead of pitching, she spent the first 15 minutes asking about his month-end close process. Not to find pain points. Not to build a business case. Just to understand.
+
+He ended up talking for 22 minutes straight. She barely said a word.
+
+At the end he said "I've never had a sales rep actually understand what my days look like. When can we talk again?"
+
+That's it. That's the whole strategy. Not a framework. Not a methodology. Just a person who genuinely wanted to understand another person's world.
+
+I've been doing this 15 years and I'm still learning from people who've been doing it 8 months.
+
+That's either humbling or exciting. Probably both.</div>
+          </div>
+
+          <!-- Post 8: The meeting after the meeting -->
+          <div class="post-card" onclick="openPost(this)">
+            <button class="copy-btn" onclick="event.stopPropagation(); copyPost(this)">Copy</button>
+            <div class="post-meta">
+              <span class="post-date">Wed Feb 19</span>
+              <span class="post-tag tag-sales">Sales</span>
+              <span class="post-length">Long</span>
+            </div>
+            <div class="post-title">The meeting after the meeting</div>
+            <div class="post-preview">I want to talk about the thing that happens after you leave the meeting. Because that's where deals actually get won or lost. And almost nobody talks about it.</div>
+            <div class="post-cta">Read Full Post &rarr;</div>
+            <div class="post-full" style="display:none">I want to talk about the thing that happens after you leave the meeting.
+
+Because that's where deals actually get won or lost. And almost nobody talks about it.
+
+You crush a demo. Everyone's nodding. Your champion is fired up. They say all the right things. "This is exactly what we need." "I'm going to talk to the team." "Can you send me something I can share?"
+
+You hang up feeling great. You update your CRM. You tell your manager the deal is moving.
+
+Then two weeks of silence.
+
+And you start wondering what happened. Did they lose interest? Did a competitor get in? Did the budget get pulled?
+
+Usually it's none of those things. Usually what happened is your champion tried to sell it internally and got destroyed.
+
+They walked into a meeting with their CFO and said "I saw this cool tool" and the CFO said "we have 14 other priorities, why should I care about this one?"
+
+And your champion didn't have an answer. Because you never gave them one.
+
+I lost a $340K deal this way in 2021. Everything was perfect on my side of the table. I just forgot that the real sale was happening on the other side. In rooms I'd never be in. In conversations I'd never hear.
+
+Now I spend as much time preparing my champion for their internal meetings as I do preparing for my own. Sometimes more.
+
+"Here's what your CFO is going to ask. Here's the data that answers it."
+
+"Here's the objection from IT. Here's how other companies in your space handled it."
+
+"Here's a one-page summary you can forward. Don't use my deck, it's too long. Use this."
+
+You're not selling anymore at that point. You're coaching. And the difference between those two things is the difference between deals that stall and deals that close.</div>
+          </div>
+
+          <!-- Post 9: The years I forgot about quota -->
+          <div class="post-card" onclick="openPost(this)">
+            <button class="copy-btn" onclick="event.stopPropagation(); copyPost(this)">Copy</button>
+            <div class="post-meta">
+              <span class="post-date">Thu Feb 20</span>
+              <span class="post-tag tag-reflection">Reflection</span>
+              <span class="post-length">Medium</span>
+            </div>
+            <div class="post-title">The years I forgot about quota</div>
+            <div class="post-preview">Been thinking about this a lot lately. The best year of my career. 239%, number 1 out of 75. I never once thought about my quota during a call.</div>
+            <div class="post-cta">Read Full Post &rarr;</div>
+            <div class="post-full" style="display:none">Been thinking about this a lot lately.
+
+The best year of my career. 239%, number 1 out of 75. I never once thought about my quota during a call.
+
+Not once.
+
+I thought about the person on the other end. What their day looks like. What's keeping them up at night. Whether I could actually help them or whether I was wasting both our time.
+
+That's it.
+
+The year I almost didn't make club. 2019, hit 103%. I thought about quota constantly. Every call, in the back of my head, this running calculation. "If this one closes I'm at 87%. If I pull in the deal from March I'm at 94%."
+
+And buyers could feel it. I know they could. Because the quality of my conversations dropped. I stopped asking hard questions because I was afraid the answers would kill the deal. I stopped disqualifying because I needed every opportunity I could get. I started discounting early because I wanted the signature more than I wanted the right deal.
+
+Quota on your mind is like commission breath for your brain. It makes you make decisions that serve you instead of the buyer. And buyers always, always know.
+
+I don't have some profound solution for this. I don't have a trick to stop thinking about it.
+
+I just know that the years I forgot about quota were the years I crushed it. And the years I obsessed over it were the years I barely made it.
+
+Make of that what you will.</div>
+          </div>
+
+          <!-- Post 10: End of week one -->
+          <div class="post-card ramp" onclick="openPost(this)">
+            <button class="copy-btn" onclick="event.stopPropagation(); copyPost(this)">Copy</button>
+            <div class="post-meta">
+              <span class="post-date">Fri Feb 21</span>
+              <span class="post-tag tag-ramp">Ramp</span>
+              <span class="post-length">Medium</span>
+            </div>
+            <div class="post-title">End of week one</div>
+            <div class="post-preview">End of my first week at Ramp. Writing this at my kitchen table at 9pm because I want to get it down while it's honest.</div>
+            <div class="post-cta">Read Full Post &rarr;</div>
+            <div class="post-full" style="display:none">End of my first week at Ramp. Writing this at my kitchen table at 9pm because I want to get it down while it's honest.
+
+Things I didn't expect:
+
+How tired I am. Not from the work. From the learning. Absorbing a new product, a new culture, a new way of selling. My brain is full in a way it hasn't been in years.
+
+How much I miss my old team. Not the company. The people. The Slack channels. The inside jokes. The shorthand. The people who knew me before I was the "179% guy" and just knew me as Chad.
+
+How good it feels to not be the expert. I forgot how much you see when you're not the person expected to have all the answers. You notice things. You hear things. You pick up on dynamics that the veterans are blind to because they've been here too long.
+
+Things I got wrong this week:
+
+I compared. A lot. "At Sage we did it this way." That's poison and I know it's poison and I still did it. Old habits.
+
+I tried to contribute before I had the context to contribute meaningfully. Jumped into a deal review and asked a question that showed I didn't understand the product well enough yet. Nobody was rude about it. But I felt it.
+
+Things I got right:
+
+I shut up more than I talked. I took notes like a maniac. I asked people about themselves before I asked about the product. I bought lunch for two people and just listened to them describe their day.
+
+That's week 1.
+
+Not polished. Not inspirational. Just real.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ====== WEEK 4: Feb 24-28 (5 posts) ====== -->
+      <div class="post-week-section" id="week-4">
+        <div class="posts-grid">
+
+          <!-- Post 11: Commission breath -->
+          <div class="post-card" onclick="openPost(this)">
+            <button class="copy-btn" onclick="event.stopPropagation(); copyPost(this)">Copy</button>
+            <div class="post-meta">
+              <span class="post-date">Mon Feb 24</span>
+              <span class="post-tag tag-sales">Sales</span>
+              <span class="post-length">Medium</span>
+            </div>
+            <div class="post-title">Commission breath</div>
+            <div class="post-preview">I say something on my first call with every buyer that makes sales leaders uncomfortable. "Hey, I've got a couple kids. Do I work on commission? Yeah. Would I love to sell you as much stuff as possible? That'd be great."</div>
+            <div class="post-cta">Read Full Post &rarr;</div>
+            <div class="post-full" style="display:none">I say something on my first call with every buyer that makes sales leaders uncomfortable.
+
+"Hey, I've got a couple kids. Do I work on commission? Yeah. Would I love to sell you as much stuff as possible? That'd be great. But that stuff's not important to you."
+
+The first time I said it I was 28 and nervous and it just fell out of my mouth. Wasn't a strategy. Was more of a panic response honestly.
+
+The buyer laughed. Whole energy shifted. We had a real conversation instead of whatever that other thing is where two adults pretend one of them isn't trying to sell something.
+
+I call it commission breath. You know what I'm talking about. When a rep needs the deal so bad the buyer can smell it. Every question has a pitch hiding behind it. Every "that's really interesting" is just waiting for an opening. The whole thing feels like a first date where one person already picked out wedding venues.
+
+Buyers know. They always know.
+
+Naming it out loud just puts the elephant on the table. "Yeah, I want to sell you stuff. Now that we've said that out loud, can we actually talk?"
+
+I've had buyers tell me MONTHS later that the reason they picked me over the other vendor was that moment. Not my demo. Not my pricing.
+
+The fact that I said the quiet part loud.</div>
+          </div>
+
+          <!-- Post 12: The headset glitch -->
+          <div class="post-card" onclick="openPost(this)">
+            <button class="copy-btn" onclick="event.stopPropagation(); copyPost(this)">Copy</button>
+            <div class="post-meta">
+              <span class="post-date">Tue Feb 25</span>
+              <span class="post-tag tag-sales">Sales</span>
+              <span class="post-length">Short</span>
+            </div>
+            <div class="post-title">The headset glitch</div>
+            <div class="post-preview">Quick one today. Top reps talk 46% of the time on calls. Bottom reps talk 72%. I used to be a 72 percenter.</div>
+            <div class="post-cta">Read Full Post &rarr;</div>
+            <div class="post-full" style="display:none">Quick one today.
+
+Top reps talk 46% of the time on calls. Bottom reps talk 72%.
+
+I used to be a 72 percenter. Thought my job was convincing people. If I could just explain it well enough, clearly enough, with enough slides, they'd get it.
+
+They didn't.
+
+Then my headset glitched on a call with a VP of Operations outside Nashville. Muted me for about 15 seconds mid-question.
+
+In those 15 seconds she told me more about her actual problem than she had in the previous 20 minutes.
+
+Because nobody was interrupting her.
+
+I learned more from a broken headset than every sales training I've ever sat through.</div>
+          </div>
+
+          <!-- Post 13: Honesty vs intention -->
+          <div class="post-card" onclick="openPost(this)">
+            <button class="copy-btn" onclick="event.stopPropagation(); copyPost(this)">Copy</button>
+            <div class="post-meta">
+              <span class="post-date">Wed Feb 26</span>
+              <span class="post-tag tag-reflection">Reflection</span>
+              <span class="post-length">Long</span>
+            </div>
+            <div class="post-title">Honesty vs intention</div>
+            <div class="post-preview">I've been having a debate with myself about honesty in sales and I want to think through it out loud. Here's the thing. Every first call, I say some version of that commission line.</div>
+            <div class="post-cta">Read Full Post &rarr;</div>
+            <div class="post-full" style="display:none">I've been having a debate with myself about honesty in sales and I want to think through it out loud.
+
+Here's the thing. Every first call, I say some version of: "I work on commission. I've got two kids. I would love to sell you everything in our catalog. But that's not what this conversation is about."
+
+And people always react the same way. They laugh a little. They relax. The whole energy shifts.
+
+But lately I've been wondering. Is that honesty or is it a move? Am I being genuine or have I just learned that performing vulnerability works?
+
+I don't have a clean answer.
+
+I think it started genuine. The first time I said it, years ago, I said it because I was nervous and it just came out. And the buyer laughed and the call went great and I thought "huh, that worked."
+
+And then I kept saying it. And it kept working. And now it's part of my process.
+
+Does something stop being honest when it becomes intentional? When you know the effect it'll have?
+
+I don't think so. Because the underlying truth hasn't changed. I do work on commission. I do have two kids. I would love to sell them everything. And I genuinely don't want to waste their time.
+
+All of that is still true.
+
+I think the difference is between manipulation and transparency. Manipulation is saying something false to get a reaction. Transparency is saying something true that also happens to build trust.
+
+Both get results. Only one you can live with.
+
+I don't know. I'm still working this one out. If you have thoughts, I'm genuinely interested.</div>
+          </div>
+
+          <!-- Post 14: Curiosity vs methodology -->
+          <div class="post-card ramp" onclick="openPost(this)">
+            <button class="copy-btn" onclick="event.stopPropagation(); copyPost(this)">Copy</button>
+            <div class="post-meta">
+              <span class="post-date">Thu Feb 27</span>
+              <span class="post-tag tag-ramp">Ramp</span>
+              <span class="post-length">Medium</span>
+            </div>
+            <div class="post-title">Curiosity vs methodology</div>
+            <div class="post-preview">Week 2 at Ramp. Something clicked today. Not about the product. About me. I was shadowing a call with one of the senior reps.</div>
+            <div class="post-cta">Read Full Post &rarr;</div>
+            <div class="post-full" style="display:none">Week 2 at Ramp.
+
+Something clicked today. Not about the product. About me.
+
+I was shadowing a call with one of the senior reps. She was talking to a CFO at a logistics company. And I noticed something in how she asked questions.
+
+She wasn't following a framework. She wasn't running through a discovery checklist. She was having a conversation. A real one. Where one question flowed naturally from the answer to the last one.
+
+And I realized I used to do that. Years ago. Before I got good enough to have a "process."
+
+Somewhere along the way, I replaced curiosity with methodology. I turned genuine interest into a repeatable system. And the system works. 179% proves it works. But watching her today reminded me of something I'd forgotten.
+
+The system is supposed to serve the conversation. Not the other way around.
+
+When the system becomes the point. When you're more focused on hitting your discovery questions than actually hearing the answers. You lose something. Something buyers can feel even if they can't name it.
+
+I think that's what the transition to a new company does. It strips away the muscle memory and forces you to be present again. Because you don't have a system yet. You're just you. Trying to understand.
+
+And "just you trying to understand" might be more powerful than any framework.
+
+I'm going to sit with that for a while.</div>
+          </div>
+
+          <!-- Post 15: End of February -->
+          <div class="post-card ramp" onclick="openPost(this)">
+            <button class="copy-btn" onclick="event.stopPropagation(); copyPost(this)">Copy</button>
+            <div class="post-meta">
+              <span class="post-date">Fri Feb 28</span>
+              <span class="post-tag tag-ramp">Ramp</span>
+              <span class="post-length">Medium</span>
+            </div>
+            <div class="post-title">End of February</div>
+            <div class="post-preview">Last day of February. Four weeks ago I was wrapping up at my old company. Saying goodbye to people I'd worked with for years. Today I'm two weeks into something completely new.</div>
+            <div class="post-cta">Read Full Post &rarr;</div>
+            <div class="post-full" style="display:none">Last day of February.
+
+Four weeks ago I was wrapping up at my old company. Saying goodbye to people I'd worked with for years. Cleaning out my desk. Feeling a mix of excitement and grief that I wasn't expecting.
+
+Today I'm two weeks into something completely new. And I want to be honest about where I am.
+
+I'm tired. Not the "I worked hard this week" tired. The bone-deep tired that comes from rebuilding your identity. From going from "the guy who knows everything" to "the guy who's learning."
+
+I'm excited. Because I can feel the edges of something. The product is real. The market is real. The problems we solve are problems I heard about for years selling ERP and couldn't do anything about. Now I can.
+
+I'm humbled. By how much I don't know. By how much there is to learn. By how good the people around me are. By the gap between "I've been doing this 15 years" and "I've been doing THIS for 2 weeks."
+
+I'm grateful. For the people who reached out after my announcement. For the DMs and the comments and the "thinking about you" texts from people I haven't talked to in months.
+
+And I'm scared. Because what if I'm not as good as I thought? What if the 179% was the product, or the territory, or the market, and not me? What if I get here and I'm just... average?
+
+I don't know the answer to that yet. I won't for a while.
+
+But I'd rather be scared and growing than comfortable and coasting.
+
+That's February. All of it. The real version.
+
+On to March.</div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ===== ENGAGEMENT ===== -->
+    <section class="section" id="engagement">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(34, 197, 94, 0.1); color: var(--green);">&#128101;</div>
+        <div>
+          <div class="section-title">Engagement List</div>
+          <div class="section-desc">25 B2B Sales Leaders &middot; 5 per day, rotates weekly &middot; Green = this week</div>
+        </div>
+      </div>
+      <div class="tabs" id="engagement-tabs">
+        <button class="tab active" onclick="showEngagementWeek(1)">Week 1</button>
+        <button class="tab" onclick="showEngagementWeek(2)">Week 2</button>
+        <button class="tab" onclick="showEngagementWeek(3)">Week 3</button>
+        <button class="tab" onclick="showEngagementWeek(4)">Week 4</button>
+        <button class="tab" onclick="showEngagementWeek(5)">Week 5</button>
+      </div>
+      <div class="week-content active" id="eng-week-1">
+        <div class="engagement-grid">
+          <div class="person-card active-week"><div class="person-avatar">IK</div><div class="person-info"><div class="person-name">Ian Koniak</div><div class="person-week">Week 1 &middot; Feb 3-7</div></div><a class="person-link" href="https://linkedin.com/in/iankoniak" target="_blank">&#8599;</a></div>
+          <div class="person-card active-week"><div class="person-avatar">JB</div><div class="person-info"><div class="person-name">John Barrows</div><div class="person-week">Week 1 &middot; Feb 3-7</div></div><a class="person-link" href="https://linkedin.com/in/johnbarrows" target="_blank">&#8599;</a></div>
+          <div class="person-card active-week"><div class="person-avatar">MI</div><div class="person-info"><div class="person-name">Morgan Ingram</div><div class="person-week">Week 1 &middot; Feb 3-7</div></div><a class="person-link" href="https://linkedin.com/in/morganingram" target="_blank">&#8599;</a></div>
+          <div class="person-card active-week"><div class="person-avatar">JK</div><div class="person-info"><div class="person-name">Jill Konrath</div><div class="person-week">Week 1 &middot; Feb 3-7</div></div><a class="person-link" href="https://linkedin.com/in/jillkonrath" target="_blank">&#8599;</a></div>
+          <div class="person-card active-week"><div class="person-avatar">AF</div><div class="person-info"><div class="person-name">Amy Franko</div><div class="person-week">Week 1 &middot; Feb 3-7</div></div><a class="person-link" href="https://linkedin.com/in/amyfranko" target="_blank">&#8599;</a></div>
+        </div>
+      </div>
+      <div class="week-content" id="eng-week-2">
+        <div class="engagement-grid">
+          <div class="person-card"><div class="person-avatar">AI</div><div class="person-info"><div class="person-name">Anthony Iannarino</div><div class="person-week">Week 2 &middot; Feb 10-14</div></div><a class="person-link" href="https://linkedin.com/in/anthonyiannarino" target="_blank">&#8599;</a></div>
+          <div class="person-card"><div class="person-avatar">JB</div><div class="person-info"><div class="person-name">Josh Braun</div><div class="person-week">Week 2 &middot; Feb 10-14</div></div><a class="person-link" href="https://linkedin.com/in/joshbraun" target="_blank">&#8599;</a></div>
+          <div class="person-card"><div class="person-avatar">KC</div><div class="person-info"><div class="person-name">Kyle Coleman</div><div class="person-week">Week 2 &middot; Feb 10-14</div></div><a class="person-link" href="https://linkedin.com/in/kylecoleman" target="_blank">&#8599;</a></div>
+          <div class="person-card"><div class="person-avatar">BB</div><div class="person-info"><div class="person-name">Belal Batrawy</div><div class="person-week">Week 2 &middot; Feb 10-14</div></div><a class="person-link" href="https://linkedin.com/in/belalbatrawy" target="_blank">&#8599;</a></div>
+          <div class="person-card"><div class="person-avatar">WA</div><div class="person-info"><div class="person-name">Will Aitken</div><div class="person-week">Week 2 &middot; Feb 10-14</div></div><a class="person-link" href="https://linkedin.com/in/willaitken" target="_blank">&#8599;</a></div>
+        </div>
+      </div>
+      <div class="week-content" id="eng-week-3">
+        <div class="engagement-grid">
+          <div class="person-card"><div class="person-avatar">AF</div><div class="person-info"><div class="person-name">Armand Farrokh</div><div class="person-week">Week 3 &middot; Feb 17-21</div></div><a class="person-link" href="https://linkedin.com/in/armandfarrokh" target="_blank">&#8599;</a></div>
+          <div class="person-card"><div class="person-avatar">NC</div><div class="person-info"><div class="person-name">Nick Cegelski</div><div class="person-week">Week 3 &middot; Feb 17-21</div></div><a class="person-link" href="https://linkedin.com/in/nickcegelski" target="_blank">&#8599;</a></div>
+          <div class="person-card"><div class="person-avatar">TB</div><div class="person-info"><div class="person-name">Tito Bohrt</div><div class="person-week">Week 3 &middot; Feb 17-21</div></div><a class="person-link" href="https://linkedin.com/in/titobohrt" target="_blank">&#8599;</a></div>
+          <div class="person-card"><div class="person-avatar">RH</div><div class="person-info"><div class="person-name">Richard Harris</div><div class="person-week">Week 3 &middot; Feb 17-21</div></div><a class="person-link" href="https://linkedin.com/in/richardharris" target="_blank">&#8599;</a></div>
+          <div class="person-card"><div class="person-avatar">MS</div><div class="person-info"><div class="person-name">Mary Shea</div><div class="person-week">Week 3 &middot; Feb 17-21</div></div><a class="person-link" href="https://linkedin.com/in/maryshea" target="_blank">&#8599;</a></div>
+        </div>
+      </div>
+      <div class="week-content" id="eng-week-4">
+        <div class="engagement-grid">
+          <div class="person-card"><div class="person-avatar">MA</div><div class="person-info"><div class="person-name">Mark Ackers</div><div class="person-week">Week 4 &middot; Feb 24-28</div></div><a class="person-link" href="https://linkedin.com/in/markackers" target="_blank">&#8599;</a></div>
+          <div class="person-card"><div class="person-avatar">JB</div><div class="person-info"><div class="person-name">James Buckley</div><div class="person-week">Week 4 &middot; Feb 24-28</div></div><a class="person-link" href="https://linkedin.com/in/jamesbuckley" target="_blank">&#8599;</a></div>
+          <div class="person-card"><div class="person-avatar">DW</div><div class="person-info"><div class="person-name">David Weiss</div><div class="person-week">Week 4 &middot; Feb 24-28</div></div><a class="person-link" href="https://linkedin.com/in/dkweiss" target="_blank">&#8599;</a></div>
+          <div class="person-card"><div class="person-avatar">SM</div><div class="person-info"><div class="person-name">Sam McKenna</div><div class="person-week">Week 4 &middot; Feb 24-28</div></div><a class="person-link" href="https://linkedin.com/in/sammckenna" target="_blank">&#8599;</a></div>
+          <div class="person-card"><div class="person-avatar">SL</div><div class="person-info"><div class="person-name">Scott Leese</div><div class="person-week">Week 4 &middot; Feb 24-28</div></div><a class="person-link" href="https://linkedin.com/in/scottleese" target="_blank">&#8599;</a></div>
+        </div>
+      </div>
+      <div class="week-content" id="eng-week-5">
+        <div class="engagement-grid">
+          <div class="person-card"><div class="person-avatar">BG</div><div class="person-info"><div class="person-name">Bridget Gleason</div><div class="person-week">Week 5 &middot; Mar 3-7</div></div><a class="person-link" href="https://linkedin.com/in/bridgetgleason" target="_blank">&#8599;</a></div>
+          <div class="person-card"><div class="person-avatar">JB</div><div class="person-info"><div class="person-name">Jason Bay</div><div class="person-week">Week 5 &middot; Mar 3-7</div></div><a class="person-link" href="https://linkedin.com/in/jasonbay" target="_blank">&#8599;</a></div>
+          <div class="person-card"><div class="person-avatar">DD</div><div class="person-info"><div class="person-name">Dale Dupree</div><div class="person-week">Week 5 &middot; Mar 3-7</div></div><a class="person-link" href="https://linkedin.com/in/daledupree" target="_blank">&#8599;</a></div>
+          <div class="person-card"><div class="person-avatar">MC</div><div class="person-info"><div class="person-name">Marcus Chan</div><div class="person-week">Week 5 &middot; Mar 3-7</div></div><a class="person-link" href="https://linkedin.com/in/marcuschanmba" target="_blank">&#8599;</a></div>
+          <div class="person-card"><div class="person-avatar">VM</div><div class="person-info"><div class="person-name">Vin Matano</div><div class="person-week">Week 5 &middot; Mar 3-7</div></div><a class="person-link" href="https://linkedin.com/in/vinmatano" target="_blank">&#8599;</a></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ===== LEAD MAGNETS ===== -->
+    <section class="section" id="magnets">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(249, 115, 22, 0.1); color: var(--orange);">&#127799;</div>
+        <div>
+          <div class="section-title">Lead Magnets</div>
+          <div class="section-desc">4 assets with keyword triggers &middot; DM scripts ready</div>
+        </div>
+      </div>
+      <div class="magnets-grid">
+        <div class="magnet-card">
+          <div class="magnet-keyword">FRAMEWORK</div>
+          <div class="magnet-title">The First Call Framework</div>
+          <div class="magnet-subtitle">"How to Win Deals in the First 5 Minutes"</div>
+          <div class="magnet-details">
+            The 3-Period Framework (like a hockey game):<br>
+            Period 1: Align on Objectives (Min 1-2)<br>
+            Period 2: Align on Agenda (Min 2-4)<br>
+            Period 3: Align on Outcomes (Min 4-5)<br><br>
+            Top reps talk 46%, bottom reps talk 72%
+          </div>
+          <div class="magnet-status"><div class="status-dot status-ready"></div><span style="color: var(--green);">Ready</span> &middot; Launch Week 3 (Feb 16)</div>
+        </div>
+        <div class="magnet-card">
+          <div class="magnet-keyword">AUDIT</div>
+          <div class="magnet-title">The Annual Sales Audit</div>
+          <div class="magnet-subtitle">"6 Steps to Find $50K You're Leaving on the Table"</div>
+          <div class="magnet-details">
+            6-Step Process: List clients &rarr; Add columns &rarr; Score wins &rarr; Score losses &rarr; Compare patterns &rarr; Pick 1-3 loss themes<br><br>
+            ROI: 45 min invested, potential 5-10% quota lift
+          </div>
+          <div class="magnet-status"><div class="status-dot status-ready"></div><span style="color: var(--green);">Ready</span> &middot; Launch Month 2 (March)</div>
+        </div>
+        <div class="magnet-card">
+          <div class="magnet-keyword">QUALIFY</div>
+          <div class="magnet-title">The Disqualification Checklist</div>
+          <div class="magnet-subtitle">"How to Know When to Walk Away"</div>
+          <div class="magnet-details">
+            10 Red Flags scored: Can't access buyer, no event, no budget, pain not quantified, single-threaded, price-shopping, timeline "whenever", no champion power, looking forever, gut says no<br><br>
+            0-1 = proceed | 2 = dig | 3-4 = consider walking | 5+ = walk
+          </div>
+          <div class="magnet-status"><div class="status-dot status-ready"></div><span style="color: var(--green);">Ready</span> &middot; Launch Month 2 (March)</div>
+        </div>
+        <div class="magnet-card">
+          <div class="magnet-keyword">SAAS</div>
+          <div class="magnet-title">Break Into SaaS Sales</div>
+          <div class="magnet-subtitle">"A Guide for Career Changers and New Grads"</div>
+          <div class="magnet-details">
+            The Path: SDR/BDR ($50-70K) &rarr; AE ($100-200K+) &rarr; Senior AE ($150-300K+)<br><br>
+            4 Steps: Learn basics (free) &rarr; Build LinkedIn &rarr; Apply strategically &rarr; Nail the interview
+          </div>
+          <div class="magnet-status"><div class="status-dot status-pending"></div><span style="color: var(--yellow);">Pending</span> &middot; Launch Month 3 (April)</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ===== METRICS ===== -->
+    <section class="section" id="metrics">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(168, 85, 247, 0.1); color: var(--purple);">&#128200;</div>
+        <div>
+          <div class="section-title">Metrics & Targets</div>
+          <div class="section-desc">90-day progression &middot; Track weekly</div>
+        </div>
+      </div>
+
+      <div class="metrics-grid" style="margin-bottom: 24px;">
+        <div class="metric-card"><div class="metric-label">Posts / Month</div><div class="metric-value" style="color: var(--accent-glow);">20</div><div class="metric-target">5 per week, Mon-Fri</div></div>
+        <div class="metric-card"><div class="metric-label">Reactions / Month</div><div class="metric-value" style="color: var(--green);">800-1.2K</div><div class="metric-target">40-60 per post</div></div>
+        <div class="metric-card"><div class="metric-label">Comments / Month</div><div class="metric-value" style="color: var(--blue);">400-600</div><div class="metric-target">20-30 per post</div></div>
+        <div class="metric-card"><div class="metric-label">Lead Captures</div><div class="metric-value" style="color: var(--orange);">40-60</div><div class="metric-target">3-5 keyword triggers/week</div></div>
+        <div class="metric-card"><div class="metric-label">New Connections</div><div class="metric-value" style="color: var(--cyan);">60-90</div><div class="metric-target">2-3 requests/day</div></div>
+        <div class="metric-card"><div class="metric-label">Profile Views</div><div class="metric-value" style="color: var(--pink);">400-600</div><div class="metric-target">Per week target</div></div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Posts</th>
+            <th>Reactions</th>
+            <th>Comments</th>
+            <th>LM Captures</th>
+            <th>Connections</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="month-current">
+            <td><strong>Feb</strong></td>
+            <td>20</td>
+            <td>800 - 1,200</td>
+            <td>400 - 600</td>
+            <td>40 - 60</td>
+            <td>60 - 90</td>
+          </tr>
+          <tr>
+            <td>Mar</td>
+            <td>20</td>
+            <td>1,000 - 1,500</td>
+            <td>500 - 750</td>
+            <td>60 - 80</td>
+            <td>60 - 90</td>
+          </tr>
+          <tr>
+            <td>Apr</td>
+            <td>20</td>
+            <td>1,200 - 1,800</td>
+            <td>600 - 900</td>
+            <td>80 - 100</td>
+            <td>60 - 90</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ===== REVENUE PROJECTIONS ===== -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(34, 197, 94, 0.1); color: var(--green);">&#128176;</div>
+        <div>
+          <div class="section-title">Year 1 Revenue Projections</div>
+          <div class="section-desc">Coaching + ERP Commission Impact</div>
+        </div>
+      </div>
+      <div class="revenue-grid">
+        <div class="revenue-card">
+          <div class="revenue-label">Coaching</div>
+          <div class="revenue-range">
+            <div class="revenue-amount" style="color: var(--text-muted);">$50K</div>
+            <div class="revenue-separator">&mdash;</div>
+            <div class="revenue-amount" style="color: var(--green);">$120K</div>
+          </div>
+        </div>
+        <div class="revenue-card">
+          <div class="revenue-label">ERP Commission</div>
+          <div class="revenue-range">
+            <div class="revenue-amount" style="color: var(--text-muted);">$30K</div>
+            <div class="revenue-separator">&mdash;</div>
+            <div class="revenue-amount" style="color: var(--green);">$90K</div>
+          </div>
+        </div>
+        <div class="revenue-card" style="border-color: var(--green); background: rgba(34, 197, 94, 0.03);">
+          <div class="revenue-label">Total</div>
+          <div class="revenue-range">
+            <div class="revenue-amount" style="color: var(--text-muted);">$80K</div>
+            <div class="revenue-separator">&mdash;</div>
+            <div class="revenue-amount" style="color: var(--green);">$210K</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ===== VOICE RULES ===== -->
+    <section class="section" id="voice">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(236, 72, 153, 0.1); color: var(--pink);">&#127908;</div>
+        <div>
+          <div class="section-title">Voice Rules</div>
+          <div class="section-desc">Dinner party, not conference &middot; Read posts out loud before posting</div>
+        </div>
+      </div>
+      <div class="voice-grid">
+        <div class="voice-do">
+          <div class="voice-heading" style="color: var(--green);">&#10003; DO</div>
+          <ul class="voice-list">
+            <li>Specific numbers ($201K ACV, 27 entities)</li>
+            <li>Vulnerable, self-deprecating openers</li>
+            <li>Dad humor &amp; pop culture references</li>
+            <li>Dinner party tone -- warm, direct</li>
+            <li>End with genuine questions</li>
+            <li>Data-backed insights (Gong, personal stats)</li>
+            <li>The "Translation" move after quotes</li>
+            <li>Admit failures and lessons learned</li>
+          </ul>
+        </div>
+        <div class="voice-dont">
+          <div class="voice-heading" style="color: var(--red);">&#10007; DON'T</div>
+          <ul class="voice-list">
+            <li>Corporate jargon ("leverage", "synergy")</li>
+            <li>Talk down to anyone</li>
+            <li>Oversell or hype</li>
+            <li>Pretend to have all the answers</li>
+            <li>Hide failures</li>
+            <li>"I" spam -- lead with insight, not yourself</li>
+            <li>Conference keynote energy</li>
+            <li>Vague claims without numbers</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card" style="margin-top: 16px; background: rgba(99, 102, 241, 0.05); border-color: rgba(99, 102, 241, 0.15);">
+        <div style="font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--accent-glow);">Voice Calibration Test</div>
+        <div style="font-size: 13px; color: var(--text-muted); line-height: 1.8;">
+          1. Is there a specific number?<br>
+          2. Did I admit something real/vulnerable?<br>
+          3. Is there a "translation" or lesson?<br>
+          4. Would a friend text this, or does it sound corporate?<br>
+          5. Is there a dad joke or pop culture reference?<br>
+          6. Did I end with a genuine question?
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ===== KEYWORD QUICK REF ===== -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--blue);">&#128273;</div>
+        <div>
+          <div class="section-title">Keyword Quick Reference</div>
+          <div class="section-desc">DM trigger words for lead magnets</div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 24px; flex: 1; min-width: 160px; text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: var(--cyan);">FRAMEWORK</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">First Call Framework</div>
+        </div>
+        <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 24px; flex: 1; min-width: 160px; text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: var(--green);">AUDIT</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Annual Sales Audit</div>
+        </div>
+        <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 24px; flex: 1; min-width: 160px; text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: var(--orange);">QUALIFY</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Disqualification Checklist</div>
+        </div>
+        <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 24px; flex: 1; min-width: 160px; text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: var(--purple);">SAAS</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Break Into SaaS Guide</div>
+        </div>
+        <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 24px; flex: 1; min-width: 160px; text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: var(--pink);">COACHING</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">DM to discuss 1:1</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    Built by LoopWorker &middot; February 2026 &middot; 90-Day LinkedIn Strategy
+  </footer>
+
+  <!-- POST MODAL -->
+  <div class="modal-overlay" id="post-modal" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="document.getElementById('post-modal').classList.remove('active')">&times;</button>
+      <div class="modal-content" id="modal-body"></div>
+      <button class="modal-copy-btn" id="modal-copy" onclick="copyFromModal()">Copy Post to Clipboard</button>
+    </div>
+  </div>
+
+  <script>
+    // ---- POST WEEK TABS ----
+    function showWeek(week) {
+      document.querySelectorAll('.post-week-section').forEach(function(el) { el.classList.remove('active'); });
+      document.getElementById('week-' + week).classList.add('active');
+      var tabs = document.getElementById('post-tabs').querySelectorAll('.tab');
+      tabs.forEach(function(t) { t.classList.remove('active'); });
+      var tabIndex = week - 2;
+      if (tabIndex >= 0 && tabIndex < tabs.length) {
+        tabs[tabIndex].classList.add('active');
+      }
+    }
+
+    // ---- ENGAGEMENT WEEK TABS ----
+    function showEngagementWeek(n) {
+      document.querySelectorAll('.week-content').forEach(function(el) { el.classList.remove('active'); });
+      document.getElementById('eng-week-' + n).classList.add('active');
+      var tabs = document.getElementById('engagement-tabs').querySelectorAll('.tab');
+      tabs.forEach(function(t) { t.classList.remove('active'); });
+      tabs[n - 1].classList.add('active');
+    }
+
+    // ---- COPY POST ----
+    function copyPost(btn) {
+      var card = btn.closest('.post-card');
+      var fullText = card.querySelector('.post-full').textContent.trim();
+      navigator.clipboard.writeText(fullText).then(function() {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    // ---- OPEN POST MODAL ----
+    function openPost(card) {
+      var fullText = card.querySelector('.post-full').textContent.trim();
+      document.getElementById('modal-body').textContent = fullText;
+      document.getElementById('post-modal').classList.add('active');
+    }
+
+    function closeModal(e) {
+      if (e.target === e.currentTarget) {
+        document.getElementById('post-modal').classList.remove('active');
+      }
+    }
+
+    function copyFromModal() {
+      var text = document.getElementById('modal-body').textContent;
+      var btn = document.getElementById('modal-copy');
+      navigator.clipboard.writeText(text).then(function() {
+        btn.textContent = 'Copied!';
+        setTimeout(function() { btn.textContent = 'Copy Post to Clipboard'; }, 2000);
+      });
+    }
+
+    // ---- ESC to close modal ----
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.getElementById('post-modal').classList.remove('active');
+      }
+    });
+
+    // ---- SMOOTH NAV SCROLL ----
+    document.querySelectorAll('.nav a').forEach(function(a) {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelectorAll('.nav a').forEach(function(n) { n.classList.remove('active'); });
+        this.classList.add('active');
+        var target = document.querySelector(this.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // ---- AUTO-DETECT CURRENT WEEK ----
+    (function() {
+      var now = new Date();
+      var weekStarts = [
+        new Date(2026, 1, 10),  // Week 2
+        new Date(2026, 1, 17),  // Week 3
+        new Date(2026, 1, 24),  // Week 4
+      ];
+      var currentWeek = 2;
+      for (var i = weekStarts.length - 1; i >= 0; i--) {
+        if (now >= weekStarts[i]) { currentWeek = i + 2; break; }
+      }
+      showWeek(currentWeek);
+
+      var engWeekStarts = [
+        new Date(2026, 1, 3),
+        new Date(2026, 1, 10),
+        new Date(2026, 1, 17),
+        new Date(2026, 1, 24),
+        new Date(2026, 2, 3),
+      ];
+      var currentEngWeek = 1;
+      for (var i = engWeekStarts.length - 1; i >= 0; i--) {
+        if (now >= engWeekStarts[i]) { currentEngWeek = i + 1; break; }
+      }
+      showEngagementWeek(currentEngWeek);
+    })();
+  </script>
+
+</body>
+</html>
